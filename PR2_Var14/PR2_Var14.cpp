@@ -5,16 +5,21 @@ using namespace std;
 #define ROWS 11
 #define COLS 11
 
+//Задание: Дано множество точек на плоскости, точки заданы своими координатами.
+//Найти наибольшее расстояние между этими точками.
+
 //Начальное общение с пользователем
 void start_print() {
 	cout << "Кузнецов Андрей ИКБО-09-21\n";
 	cout << "Практическая работа №2 «Двумерный массив»\n";
+	cout << "Программа считает наибольшее расстояние между точками на плоскости.";
 	cout << "Какой тип массива будем использовать?\n";
 	cout << "1 - Static, 2 - Dynamic, 3 - Vector\n";
 	cout << "Ввод: ";
 }
 
-void print_array(int mas[][COLS]) {
+//Вывод статического двумерного массива
+void print_static_array(int mas[][COLS]) {
 	for (int i = 0; i < COLS; i++) {
 		for (int j = 0; j < ROWS; j++)
 			cout << mas[i][j] << " ";
@@ -22,14 +27,18 @@ void print_array(int mas[][COLS]) {
 	}
 }
 
-void zero_array(int mas[][COLS], int n, int m) {
+//Зануление статического двумерного массива
+void zero_static_array(int mas[][COLS], int n, int m) {
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
 			mas[i][j] = 0;
 }
 
-int enter_points_coords(int mas[][COLS], int n) {
+//Размещение точек на координатную плоскость по их координатам
+int enter_points_coords_static(int mas[][COLS], int n) {
 	int x = 0, y = 0;
+
+	//задаем границы статической координатной плоскости
 	int bot_x = -(ROWS - 1) / 2;
 	int bot_y = -(COLS - 1) / 2;
 	int high_x = (ROWS - 1) / 2;
@@ -39,13 +48,15 @@ int enter_points_coords(int mas[][COLS], int n) {
 	{
 		cout << "Введите координаты " << i << "й точки (x,y): ";
 		do {
+			//проверка на выход за границы коррдинатной плоскости
 			if (x < bot_x or x > high_x or y < bot_y or y > high_y) {
 				cout << "Выход за пределы координатной плоскости." << endl;
 				cout << "Введите ещё раз (" << bot_x << " <= x <= " << high_x;
-				cout << ", " << bot_y << " <= y <= " << high_y << ") : ";
+				cout << ", " << bot_y << " <= y <= " << high_y << ") :";
 			}
 			cin >> x >> y;
 		} while (x < bot_x or x > high_x or y < bot_y or y > high_y);
+		//проверка на уже существующую точку
 		if (mas[(ROWS - 1) / 2 - y][(COLS - 1) / 2 + x] == 1) {
 			cout << "Точка с такими координатами уже существует." << endl;
 			i--;
@@ -57,7 +68,8 @@ int enter_points_coords(int mas[][COLS], int n) {
 	return 0;
 }
 
-double max_dist(int mas[][COLS]) {
+//нахождение наибольшего расстояния между точками в статическом одномерном массиве
+double max_dist_static(int mas[][COLS]) {
 	int last_slot = ROWS * COLS;
 	double max_d = -1;
 	int x, y;
@@ -72,7 +84,8 @@ double max_dist(int mas[][COLS]) {
 					for (int k = 0; k < ROWS; k++)
 					{
 						if (mas[m][k] == 1) {
-							double dist = sqrt(pow(double(m - i), 2.0) + pow(double(k - j), 2.0));
+							double dist = 
+								sqrt(pow(double(m - i), 2.0) + pow(double(k - j), 2.0));
 							if (max_d < dist)
 								max_d = dist;
 						}
@@ -84,6 +97,7 @@ double max_dist(int mas[][COLS]) {
 	return (round(max_d * 1000) / 1000);
 }
 
+//ввод количества точек
 int enter_n_points() {
 	int n;
 	cout << "Сколько точек будет находиться на координатной плоскости?\n";
@@ -93,17 +107,20 @@ int enter_n_points() {
 	return n;
 }
 
+//основной код для работы со статическим массивом
 void static_mas() {
 	int static_mas[ROWS][COLS];
 	int n_points;
 	n_points = enter_n_points();
-	zero_array(static_mas, ROWS, COLS);
-	enter_points_coords(static_mas, n_points);
-	//print_array(static_mas);
+	zero_static_array(static_mas, ROWS, COLS);
+	enter_points_coords_static(static_mas, n_points);
+	cout << "Получившаяся координатная плоскость:\n";
+	print_static_array(static_mas);
 	cout << "Максимальное расстояние между заданными точками равно: ";
-	cout << max_dist(static_mas);
+	cout << max_dist_static(static_mas);
 }
 
+//создание динамического двумерного массива (координатной плоскости)
 void create_dynamic_array(int**& mas, int n, int m) {
 	mas = new int* [m];
 	for (int i = 0; i < m; i++)
@@ -112,6 +129,7 @@ void create_dynamic_array(int**& mas, int n, int m) {
 	}
 }
 
+//зануление динамического двумерного массива
 void zero_dynamic_array(int**& mas, int n, int m) {
 	for (int i = 0; i < (n*2+1); i++)
 		for (int j = 0; j < (m*2+1); j++)
@@ -119,6 +137,7 @@ void zero_dynamic_array(int**& mas, int n, int m) {
 				mas[i][j] = 0;
 }
 
+//вывод динамического двумерного массива
 void print_dynamic_array(int** mas, int n, int m) {
 	for (int i = 0; i < (n*2+1); i++) {
 		for (int j = 0; j < (m*2+1); j++)
@@ -127,6 +146,8 @@ void print_dynamic_array(int** mas, int n, int m) {
 	}
 }
 
+//Размещение точек на координатную плоскость по их координатам
+//в двумерном динамическом массиве
 int enter_points_coords_dynamic(int**& mas, int n_points, int& n, int& m, int**& newMas) {
 	int x = 0;
 	int y = 0;
@@ -135,7 +156,12 @@ int enter_points_coords_dynamic(int**& mas, int n_points, int& n, int& m, int**&
 	{
 		cout << "Введите координаты " << i << "й точки (x,y): ";
 		cin >> x >> y;
+		//в случае выхода точки за границы координатной плоскости
+		//создание нового расширенного двумерного динамического массива и его зануление
+		//копирует точки из старого двумерного массива в новый
 		if (abs(x)>n or abs(y)>m) {
+			
+			//в случае выхода по оси абцисс
 			if (abs(x) > n) {
 				/*newMas = (int**)realloc(newMas, (x * 2 + 1) * sizeof(int*));
 				for (int i = 0; i < (x * 2 + 1); i++)
@@ -153,6 +179,8 @@ int enter_points_coords_dynamic(int**& mas, int n_points, int& n, int& m, int**&
 				m = abs(x);
 				mas = newMas;
 			}
+
+			//в случае выхода по оси ординат
 			if (abs(y) > m) {
 				/*newMas = (int**)realloc(newMas, (y * 2 + 1) * sizeof(int*));
 				for (int i = 0; i < (y * 2 + 1); i++)
@@ -174,6 +202,7 @@ int enter_points_coords_dynamic(int**& mas, int n_points, int& n, int& m, int**&
 			
 		}
 
+		//проверка на существующую точку
 		if (mas[m - y][n + x] == 1) {
 			cout << "Точка с такими координатами уже существует." << endl;
 			i--;
@@ -184,6 +213,7 @@ int enter_points_coords_dynamic(int**& mas, int n_points, int& n, int& m, int**&
 	return 0;
 }
 
+//нахождение наибольшего расстояния между точками в динамическом двумерном массиве
 double max_dist_dynamic(int** mas, int n, int m) {
 	double max_d = -1;
 	int x, y;
@@ -210,7 +240,7 @@ double max_dist_dynamic(int** mas, int n, int m) {
 	return (round(max_d * 1000) / 1000);
 }
 
-
+//основной код для работы с динамическим двумерным массивом
 void dynamic_mas() {
 	int** dynamic_mas;
 	int** newMas;
@@ -241,6 +271,7 @@ int main()
 			break;
 		case 2:
 			dynamic_mas();
+			break;
 		default:
 			break;
 		}
