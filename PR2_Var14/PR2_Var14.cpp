@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #define ROWS 11
@@ -252,9 +253,176 @@ void dynamic_mas() {
 	n_points = enter_n_points();
 	//print_dynamic_array(dynamic_mas, n, m);
 	enter_points_coords_dynamic(dynamic_mas, n_points, n, m, newMas);
-	//print_dynamic_array(dynamic_mas, n, m);
+	cout << "Получившаяся координатная плоскость:\n";
+	print_dynamic_array(dynamic_mas, n, m);
 	cout << "Максимальное расстояние между заданными точками равно: ";
 	cout << max_dist_dynamic(dynamic_mas, n*2+1, m*2+1);
+}
+
+int zero_vector_mas(vector < vector <int> >& mas, int n, int m) {
+	for (int i = 0; i < n; i++)     // Цикл, который идёт по строкам
+		for (int j = 0; j < m; j++) // Цикл, который идёт по элементам
+		{
+			mas[i][j] = 0;
+		}
+	return 0;
+}
+
+void print_vector_mas(vector < vector <int> >& mas, int n, int m) {
+	for (int i = 0; i < n; i++) // Цикл, который идёт по строкам
+	{
+		for (int j = 0; j < m; j++) // Цикл, который идёт по элементам
+			cout << mas[i][j] << ' '; // Вывод элементов i строки вектора
+		cout << endl;
+	}
+}
+
+int enter_points_coords_vector(vector < vector <int> >& mas, int n_points, int& n, int& m) {
+	int x = 0;
+	int y = 0;
+
+
+	for (int i = 1; i <= n_points; i++)
+	{
+		cout << "Введите координаты " << i << "й точки (x,y): ";
+		cin >> x >> y;
+
+		//в случае выхода точки за границы координатной плоскости
+		//создание нового расширенного двумерного динамического массива и его зануление
+		//копирует точки из старого двумерного массива в новый
+		if (abs(x) > ((n-1)/2.0) or abs(y) > ((m - 1) / 2.0)) {
+			
+			
+			//в случае выхода по оси абцисс
+			if (abs(x) > (n-1)/2.0) {
+				vector < vector <int> > vector_new_mas((abs(x) * 2 + 1), vector <int>(abs(x) * 2 + 1));
+				zero_vector_mas(vector_new_mas, abs(x) * 2 + 1, abs(x) * 2 + 1);
+				//print_vector_mas(vector_new_mas, (abs(x) * 2 + 1), (abs(x) * 2 + 1));
+				for (int k = 0; k < n; k++)
+				{
+					for (int r = 0; r < m; r++)
+					{
+						vector_new_mas[k + abs(x) - (n-1)/2.0][r + abs(x) - (n - 1) / 2.0] = mas[k][r];
+					}
+				}
+				n = abs(x) * 2 + 1;
+				m = abs(x) * 2 + 1;
+				mas = vector_new_mas;
+			}
+
+			if (abs(y) > (m - 1) / 2.0) {
+				vector < vector <int> > vector_new_mas((abs(y) * 2 + 1), vector <int>(abs(y) * 2 + 1));
+				zero_vector_mas(vector_new_mas, abs(y) * 2 + 1, abs(y) * 2 + 1);
+				//print_vector_mas(vector_new_mas, (abs(y) * 2 + 1), (abs(y) * 2 + 1));
+				for (int k = 0; k < n; k++)
+				{
+					for (int r = 0; r < m; r++)
+					{
+						vector_new_mas[k + abs(y) - (n - 1) / 2.0][r + abs(y) - (n - 1) / 2.0] = mas[k][r];
+					}
+				}
+				n = abs(y) * 2 + 1;
+				m = abs(y) * 2 + 1;
+				mas = vector_new_mas;
+			}
+		}
+
+		//проверка на существующую точку
+		if (mas[(m - 1) / 2.0 - y][(n - 1) / 2.0 + x] == 1) {
+			cout << "Точка с такими координатами уже существует." << endl;
+			i--;
+		}
+		else
+			mas[(m-1)/2.0 - y][(n-1)/2.0 + x] = 1;
+	}
+	return 0;
+}
+
+void kvadrat(vector < vector <int> >& vector_mas,int n,int m) {
+	int sum = 0;
+	int max_sum = 0;
+	int max_coord_1x = 0;
+	int max_coord_1y = 0;
+	int max_coord_2x = 0;
+	int max_coord_2y = 0;
+	int max_coord_3x = 0;
+	int max_coord_3y = 0;
+	int max_coord_4x = 0;
+	int max_coord_4y = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			if (vector_mas[i][j] == 1) {
+				for (int p = j + 1; p < m; p++)
+				{
+					if ((i + p - j) <= n)
+					{
+						if (vector_mas[i][p] == 1 and vector_mas[i + p - j][j] == 1 and vector_mas[i + p - j][p] == 1) {
+							for (int r = i + 1; r < i + p - j; r++)
+							{
+								for (int v = j + 1; v < p; v++)
+								{
+									if (vector_mas[r][v] == 1)
+									{
+										sum += 1;
+									}
+								}
+							}
+							if (max_sum < sum)
+							{
+								max_sum = sum;
+								max_coord_1x = j - ((m - 1) / 2.0);
+								max_coord_1y = ((n - 1) / 2.0) - i;
+								max_coord_2x = p - ((m - 1) / 2.0);
+								max_coord_2y = ((n - 1) / 2.0) - i;
+								max_coord_3x = j - ((m - 1) / 2.0);
+								max_coord_3y = ((n - 1) / 2.0) - (i + p - j);
+								max_coord_4x = p - ((m - 1) / 2.0);
+								max_coord_4y = ((n - 1) / 2.0) - (i + p - j);
+							}
+							sum = 0;
+						}
+					}
+				}
+			}
+
+		}
+	}
+	if (max_coord_1x == 0 and
+		max_coord_1y == 0 and
+		max_coord_2x == 0 and
+		max_coord_2y == 0 and
+		max_coord_3x == 0 and
+		max_coord_3y == 0 and
+		max_coord_4x == 0 and
+		max_coord_4y == 0)
+	{
+		cout << "Не существует такого квадрата, внутри которого была хотябы 1 точка";
+	}
+	else {
+		cout << "Квадрат с наибольшим количеством точек (" << max_sum << ") имеет координаты : \n" <<
+			"(" << max_coord_1x << "," << max_coord_1y << ");" <<
+			"(" << max_coord_2x << "," << max_coord_2y << ");" <<
+			"(" << max_coord_3x << "," << max_coord_3y << ");" <<
+			"(" << max_coord_4x << "," << max_coord_4y << ")\n";
+	}
+}
+
+
+//Задано множество точек на плоскости. Найти все четверки точек, являющихся вершинами квадратов. 
+//Найти квадрат, внутри которого лежит наибольшее количество точек множества.
+void vector_mas() {
+	int n = ROWS;
+	int m = COLS;
+	int n_points;
+	vector < vector <int> > vector_mas(n, vector <int>(m)); // Объявление вектора на n строк по m элементов 
+	zero_vector_mas(vector_mas, n, m);
+	n_points = enter_n_points();
+	enter_points_coords_vector(vector_mas, n_points, n, m);
+	cout << "Получившаяся координатная плоскость:\n";
+	print_vector_mas(vector_mas, n, m);
+	kvadrat(vector_mas, n, m);
 }
 
 int main()
@@ -272,6 +440,8 @@ int main()
 		case 2:
 			dynamic_mas();
 			break;
+		case 3:
+			vector_mas();
 		default:
 			break;
 		}
