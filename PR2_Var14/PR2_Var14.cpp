@@ -6,14 +6,12 @@ using namespace std;
 #define ROWS 11
 #define COLS 11
 
-//Задание: Дано множество точек на плоскости, точки заданы своими координатами.
-//Найти наибольшее расстояние между этими точками.
-
 //Начальное общение с пользователем
 void start_print() {
 	cout << "Кузнецов Андрей ИКБО-09-21\n";
 	cout << "Практическая работа №2 «Двумерный массив»\n";
-	cout << "Программа считает наибольшее расстояние между точками на плоскости.";
+	cout << "№1) Программа считает наибольшее расстояние между точками на плоскости (для статического и динамического массивов)\n";
+	cout << "№2) Программа находит координаты квадрата, внутри которого находится наибольшее количество точек (для вектора)\n\n";
 	cout << "Какой тип массива будем использовать?\n";
 	cout << "1 - Static, 2 - Dynamic, 3 - Vector\n";
 	cout << "Ввод: ";
@@ -102,7 +100,6 @@ double max_dist_static(int mas[][COLS]) {
 int enter_n_points() {
 	int n;
 	cout << "Сколько точек будет находиться на координатной плоскости?\n";
-	cout << "(Не больше 100)\n";
 	cout << "Ввод: ";
 	cin >> n;
 	return n;
@@ -115,8 +112,11 @@ void static_mas() {
 	n_points = enter_n_points();
 	zero_static_array(static_mas, ROWS, COLS);
 	enter_points_coords_static(static_mas, n_points);
-	cout << "Получившаяся координатная плоскость:\n";
-	print_static_array(static_mas);
+	cout << "Вывести получившаюся координатную плоскость? (1 - Да, 2 - Нет)\nВвод: ";
+	int flag05;
+	cin >> flag05;
+	if (flag05 == 1)
+		print_static_array(static_mas);
 	cout << "Максимальное расстояние между заданными точками равно: ";
 	cout << max_dist_static(static_mas);
 }
@@ -251,17 +251,19 @@ void dynamic_mas() {
 	create_dynamic_array(dynamic_mas, ROWS, COLS);
 	zero_dynamic_array(dynamic_mas,n,m);
 	n_points = enter_n_points();
-	//print_dynamic_array(dynamic_mas, n, m);
 	enter_points_coords_dynamic(dynamic_mas, n_points, n, m, newMas);
-	cout << "Получившаяся координатная плоскость:\n";
-	print_dynamic_array(dynamic_mas, n, m);
+	cout << "Вывести получившаюся координатную плоскость? (1 - Да, 2 - Нет)\nВвод: ";
+	int flag05;
+	cin >> flag05;
+	if (flag05 == 1)
+		print_dynamic_array(dynamic_mas, n, m);
 	cout << "Максимальное расстояние между заданными точками равно: ";
 	cout << max_dist_dynamic(dynamic_mas, n*2+1, m*2+1);
 }
 
 int zero_vector_mas(vector < vector <int> >& mas, int n, int m) {
-	for (int i = 0; i < n; i++)     // Цикл, который идёт по строкам
-		for (int j = 0; j < m; j++) // Цикл, который идёт по элементам
+	for (int i = 0; i < n; i++)     
+		for (int j = 0; j < m; j++)
 		{
 			mas[i][j] = 0;
 		}
@@ -269,10 +271,10 @@ int zero_vector_mas(vector < vector <int> >& mas, int n, int m) {
 }
 
 void print_vector_mas(vector < vector <int> >& mas, int n, int m) {
-	for (int i = 0; i < n; i++) // Цикл, который идёт по строкам
+	for (int i = 0; i < n; i++)
 	{
-		for (int j = 0; j < m; j++) // Цикл, который идёт по элементам
-			cout << mas[i][j] << ' '; // Вывод элементов i строки вектора
+		for (int j = 0; j < m; j++)
+			cout << mas[i][j] << ' ';
 		cout << endl;
 	}
 }
@@ -297,7 +299,6 @@ int enter_points_coords_vector(vector < vector <int> >& mas, int n_points, int& 
 			if (abs(x) > (n-1)/2.0) {
 				vector < vector <int> > vector_new_mas((abs(x) * 2 + 1), vector <int>(abs(x) * 2 + 1));
 				zero_vector_mas(vector_new_mas, abs(x) * 2 + 1, abs(x) * 2 + 1);
-				//print_vector_mas(vector_new_mas, (abs(x) * 2 + 1), (abs(x) * 2 + 1));
 				for (int k = 0; k < n; k++)
 				{
 					for (int r = 0; r < m; r++)
@@ -313,7 +314,6 @@ int enter_points_coords_vector(vector < vector <int> >& mas, int n_points, int& 
 			if (abs(y) > (m - 1) / 2.0) {
 				vector < vector <int> > vector_new_mas((abs(y) * 2 + 1), vector <int>(abs(y) * 2 + 1));
 				zero_vector_mas(vector_new_mas, abs(y) * 2 + 1, abs(y) * 2 + 1);
-				//print_vector_mas(vector_new_mas, (abs(y) * 2 + 1), (abs(y) * 2 + 1));
 				for (int k = 0; k < n; k++)
 				{
 					for (int r = 0; r < m; r++)
@@ -410,18 +410,19 @@ void kvadrat(vector < vector <int> >& vector_mas,int n,int m) {
 }
 
 
-//Задано множество точек на плоскости. Найти все четверки точек, являющихся вершинами квадратов. 
-//Найти квадрат, внутри которого лежит наибольшее количество точек множества.
 void vector_mas() {
 	int n = ROWS;
 	int m = COLS;
 	int n_points;
-	vector < vector <int> > vector_mas(n, vector <int>(m)); // Объявление вектора на n строк по m элементов 
+	vector < vector <int> > vector_mas(n, vector <int>(m));
 	zero_vector_mas(vector_mas, n, m);
 	n_points = enter_n_points();
 	enter_points_coords_vector(vector_mas, n_points, n, m);
-	cout << "Получившаяся координатная плоскость:\n";
-	print_vector_mas(vector_mas, n, m);
+	cout << "Вывести получившаюся координатную плоскость? (1 - Да, 2 - Нет)\nВвод: ";
+	int flag05;
+	cin >> flag05;
+	if (flag05==1)
+		print_vector_mas(vector_mas, n, m);
 	kvadrat(vector_mas, n, m);
 }
 
@@ -445,6 +446,5 @@ int main()
 		default:
 			break;
 		}
-
 	} while (menu != 0);
 }
